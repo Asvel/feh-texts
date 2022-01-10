@@ -1,0 +1,9 @@
+{
+  "name": "feh-messages",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "opencc-js": "^1.0.3"
+  }
+}
