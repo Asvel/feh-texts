@@ -1,5 +1,6 @@
 const fs = require('fs');
 const cc = require('opencc-js').Converter({ from: 'tw', to: 'cn' });
+const YAML = require('yaml');
 
 const assetsPath = '../../feh-assets-json/files/assets/';  // from https://github.com/HertzDevil/feh-assets-json
 const locales = ['JPJA', 'TWZH', 'USEN'];
@@ -33,13 +34,13 @@ const keys = Object.keys(messages).sort().filter(key => {
 
 const grouped = {};
 for (const key of keys) {
-  let parts = key.split('_').map(p => p + '\u0001');  // escape to avoid js object key number order
+  let parts = key.split('_').map(p => p + '\ue001');  // escape to avoid js object key number order
   let container = grouped;
   const last = parts.splice(parts.length - 1, 1)[0];
   for (const part of parts) {
     let c = container[part] ??= {};
     if (Array.isArray(c)) {
-      c = container[part] = { '': c };
+      c = container[part] = { '\ue002': c };
     }
     container = c;
   }
@@ -55,7 +56,7 @@ const annotated = {
   'MWID - Weapon type': 'MWID',
 };
 for (const key of Object.keys(annotated)) {
-  const originalKey = annotated[key] + '\u0001';
+  const originalKey = annotated[key] + '\ue001';
   annotated[key] = grouped[originalKey];
   delete grouped[originalKey];
 }
@@ -63,4 +64,7 @@ for (const key of Object.keys(grouped)) {
   annotated[key] = grouped[key];
 }
 
-fs.writeFileSync('../texts.json', JSON.stringify(annotated, null, 2).replaceAll('\\u0001', ''));
+fs.writeFileSync('../texts.json', JSON.stringify(annotated, null, 2)
+  .replaceAll('\ue001', '').replaceAll('\ue002', ''));
+fs.writeFileSync('../texts.yaml', YAML.stringify(annotated)
+  .replaceAll('\ue001', '').replaceAll('\ue002', '.'));

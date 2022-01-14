@@ -2,7 +2,7 @@
 
 Fire Emblem Heroes JA/ZH/EN in-game texts for (human) searching.
 
-Clone it locally or use [online vscode](https://github1s.com/Asvel/feh-texts/blob/master/texts.json) for better experience.
+Clone it locally or use [online vscode](https://github1s.com/Asvel/feh-texts/blob/master/texts.yaml) for better experience.
 
 # License
 

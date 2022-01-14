@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "opencc-js": "^1.0.3"
+    "opencc-js": "^1.0.3",
+    "yaml": "^1.10.2"
   }
 }
