@@ -64,7 +64,7 @@ for (const key of Object.keys(grouped)) {
   annotated[key] = grouped[key];
 }
 
-fs.writeFileSync('../texts.json', JSON.stringify(annotated, null, 2)
-  .replaceAll('\ue001', '').replaceAll('\ue002', ''));
+// fs.writeFileSync('../texts.json', JSON.stringify(annotated, null, 2)
+//   .replaceAll('\ue001', '').replaceAll('\ue002', ''));
 fs.writeFileSync('../texts.yaml', YAML.stringify(annotated)
   .replaceAll('\ue001', '').replaceAll('\ue002', '.'));
