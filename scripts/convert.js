@@ -17,7 +17,7 @@ for (const locale of locales) {
         key = key.replace(/^(.+)_(H|HONOR|ILLUST|LEGEND|SEARCH|VOICE)_(.+)$/, '$1_$3_$2');
         messages[key] ??= [];
         messages[key].push(value);
-        if (locale === 'TWZH') messages[key].push(value && cc(value));
+        if (locale === 'TWZH') messages[key].push(value && cc(value).replaceAll('抵销', '抵消'));
       }
     }
   }
