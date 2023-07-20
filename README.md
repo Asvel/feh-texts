@@ -1,6 +1,6 @@
 # FEH Texts
 
-Fire Emblem Heroes JA/ZH/EN in-game texts for (human) searching.
+Fire Emblem Heroes JA/ZH/EN in-game texts for (human) searching, useful for reading user-generated content in other languages.
 
 Clone it locally or use [online vscode](https://github1s.com/Asvel/feh-texts/blob/master/texts.yaml) for better experience.
 

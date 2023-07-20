@@ -66,5 +66,5 @@ for (const key of Object.keys(grouped)) {
 
 // fs.writeFileSync('../texts.json', JSON.stringify(annotated, null, 2)
 //   .replaceAll('\ue001', '').replaceAll('\ue002', ''));
-fs.writeFileSync('../texts.yaml', YAML.stringify(annotated)
+fs.writeFileSync('../texts.yaml', YAML.stringify(annotated, { lineWidth: 0 })
   .replaceAll('\ue001', '').replaceAll('\ue002', '.'));
