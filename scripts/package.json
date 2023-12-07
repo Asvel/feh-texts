@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "lz11": "^1.0.3",
     "opencc-js": "^1.0.3",
-    "yaml": "^1.10.2"
+    "yaml": "^2.3.4"
   }
 }

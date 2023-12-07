@@ -1,18 +1,65 @@
 const fs = require('fs');
 const cc = require('opencc-js').Converter({ from: 'tw', to: 'cn' });
 const YAML = require('yaml');
+const lz11 = require('./lz11');
 
-const assetsPath = '../../feh-assets-json/files/assets/';  // from https://github.com/HertzDevil/feh-assets-json
 const locales = ['JPJA', 'TWZH', 'USEN'];
 const types = ['CrossLanguage', 'Data', 'Menu'];
+
+const messageCipher = [
+  0x6F, 0xB0, 0x8F, 0xD6, 0xEF, 0x6A, 0x5A, 0xEB,
+  0xC6, 0x76, 0xF6, 0xE5, 0x56, 0x9D, 0xB8, 0x08,
+  0xE0, 0xBD, 0x93, 0xBA, 0x05, 0xCC, 0x26, 0x56,
+  0x65, 0x1E, 0xF8, 0x2B, 0xF9, 0xA1, 0x7E, 0x41,
+  0x18, 0x21, 0xA4, 0x94, 0x25, 0x08, 0xB8, 0x38,
+  0x2B, 0x98, 0x53, 0x76, 0xC6, 0x2E, 0x73, 0x5D,
+  0x74, 0xCB, 0x02, 0xE8, 0x98, 0xAB, 0xD0, 0x36,
+  0xE5, 0x37
+];
+
+function parseMessageAsset(filename) {
+  const data = fs.readFileSync(filename);
+  const data32 = new Uint32Array(data.buffer, data.byteOffset, data.length / Uint32Array.BYTES_PER_ELEMENT);
+  let cipher = ((data.readUint32LE(0) >> 8) * 0x8083) & 0xFFFFFFFF;
+  for (let i = 2; i < data32.length; i++) {
+    data32[i] ^= cipher;
+    cipher ^= data32[i];
+  }
+  const hsdarc = lz11.decompress(data.subarray(0x04));
+  const hsdarcBody = hsdarc.subarray(0x20);
+
+  const entries = [];
+  const entryCount = hsdarcBody.readUint32LE(0x00);
+  const readString = pointerOffset => {
+    const stringOffset = hsdarcBody.readUint32LE(pointerOffset);
+    if (stringOffset === 0) return '';
+    const stringBuffer = hsdarcBody.subarray(stringOffset);
+    let i = 0;
+    while (stringBuffer[i] !== 0) {
+      const cipher = messageCipher[i % messageCipher.length];
+      if (stringBuffer[i] !== cipher) {
+        stringBuffer[i] ^= cipher;
+      }
+      i++;
+    }
+    return stringBuffer.toString('utf-8', 0, i);
+  };
+  for (let i = 0; i < entryCount; i++) {
+    const key = readString(i * 0x10 + 0x08);
+    const value = readString(i * 0x10 + 0x10);
+    if (value === '') continue;
+    entries.push([key, value]);
+  }
+  return entries;
+}
 
 const messages = {};
 for (const locale of locales) {
   for (const type of types) {
-    const messagePath = `${assetsPath}${locale}/Message/${type}/`;
+    const messagePath = `./assets/${locale}/Message/${type}/`;
     for (const filename of fs.readdirSync(messagePath)) {
-      const data = JSON.parse(fs.readFileSync(messagePath + filename, 'utf8'));
-      for (let { key, value } of data) {
+      const data = parseMessageAsset(messagePath + filename);
+      for (let [key, value] of data) {
         if (value === null) continue;
         key = key.replace(/^(.+)_(H|HONOR|ILLUST|LEGEND|SEARCH|VOICE)_(.+)$/, '$1_$3_$2');
         messages[key] ??= [];
