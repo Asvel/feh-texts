@@ -61,6 +61,7 @@ for (const locale of locales) {
       const data = parseMessageAsset(messagePath + filename);
       for (let [key, value] of data) {
         if (value === null) continue;
+        if (key.endsWith('_NOSKW')) continue;  // skip skill help without keywords descriptive text
         key = key.replace(/^(.+)_(H|HONOR|ILLUST|LEGEND|SEARCH|VOICE)_(.+)$/, '$1_$3_$2');
         messages[key] ??= [];
         messages[key].push(value);
